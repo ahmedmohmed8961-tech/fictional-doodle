@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اسكربت ايمكس</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #030008;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .app-wrapper {
+            width: 100%;
+            max-width: 360px;
+            background: #090214;
+            border: 2px solid #6b17c7;
+            border-radius: 28px;
+            padding: 18px 12px;
+            box-shadow: 0 0 15px rgba(107, 23, 199, 0.45);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .main-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #e5b8ff;
+            text-shadow: 0 0 12px #9d4edd;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        /* --- شاشة الدخول --- */
+        #login-view {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .login-card {
+            width: 100%;
+            border: 1.5px solid #5513a0;
+            border-radius: 20px;
+            padding: 24px 16px;
+            background: rgba(14, 3, 30, 0.85);
+        }
+
+        .field-group {
+            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .field-label {
+            font-size: 13px;
+            color: #ffffff;
+            margin-bottom: 6px;
+            text-align: right;
+        }
+
+        .field-input {
+            width: 100%;
+            height: 48px;
+            background: #0c041c;
+            border: 1.5px solid #5a19a8;
+            border-radius: 12px;
+            color: #ffffff;
+            font-size: 16px;
+            text-align: center;
+            outline: none;
+        }
+
+        .field-input:focus {
+            border-color: #9d4edd;
+            box-shadow: 0 0 8px rgba(157, 78, 221, 0.5);
+        }
+
+        .btn-login {
+            width: 100%;
+            height: 48px;
+            background: #140529;
+            border: 1.5px solid #6b17c7;
+            border-radius: 12px;
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .author-tag {
+            text-align: center;
+            font-size: 13px;
+            color: #9283a8;
+            margin-top: 24px;
+        }
+
+        .err-msg {
+            color: #ff4d6d;
+            font-size: 12px;
+            text-align: center;
+            margin-top: 10px;
+            min-height: 16px;
+        }
+
+        /* --- شاشة اللعبة --- */
+        #game-view {
+            width: 100%;
+            display: none;
+            flex-direction: column;
+        }
+
+        .status-header {
+            display: flex;
+            gap: 8px;
+            width: 100%;
+            margin-bottom: 14px;
+        }
+
+        .info-pill {
+            flex: 1;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #0b0217;
+            border: 1.5px solid #5513a0;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #ffffff;
+            direction: ltr;
+        }
+
+        .board-container {
+            width: 100%;
+            border: 1.5px solid #5513a0;
+            border-radius: 18px;
+            padding: 10px 8px;
+            background: #070110;
+        }
+
+        .rows-wrapper {
+            display: flex;
+            flex-direction: column-reverse;
+            gap: 5px;
+        }
+
+        .row-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .cells-group {
+            display: flex;
+            gap: 5px;
+        }
+
+        .circle-token {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 19px;
+            box-shadow: inset 0 2px 4px rgba(255,255,255,0.3);
+            transition: all 0.25s ease;
+        }
+
+        .token-default {
+            background: repeating-linear-gradient(180deg, #d38a45 0px, #d38a45 6px, #85471d 6px, #85471d 12px);
+            border: 1.5px solid #4a230c;
+        }
+
+        .token-green {
+            background: radial-gradient(circle at 35% 35%, #5ff5b4, #00874e);
+            border: 1.5px solid #33d691;
+            box-shadow: 0 0 8px rgba(51, 214, 145, 0.4);
+        }
+
+        .token-red {
+            background: radial-gradient(circle at 35% 35%, #ff8da6, #b01a3c);
+            border: 1.5px solid #ff4d6d;
+            box-shadow: 0 0 8px rgba(255, 77, 109, 0.4);
+        }
+
+        .multiplier-tag {
+            font-size: 11px;
+            font-weight: bold;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 3px;
+            min-width: 65px;
+            direction: ltr;
+        }
+
+        .multiplier-tag .icon {
+            color: #e63956;
+            font-size: 12px;
+        }
+
+        .actions-group {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            margin-top: 14px;
+        }
+
+        .action-btn {
+            flex: 1;
+            height: 44px;
+            background: #0b0217;
+            border: 1.5px solid #5513a0;
+            border-radius: 12px;
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            letter-spacing: 0.5px;
+        }
+
+        .action-btn:hover {
+            background: #1b0736;
+        }
+
+        .footer-note {
+            margin-top: 10px;
+            font-size: 11px;
+            color: #9283a8;
+            text-align: center;
+            line-height: 1.4;
+            min-height: 28px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-wrapper">
+
+    <!-- شاشة الدخول -->
+    <div id="login-view">
+        <div class="main-title">اسكربت ايمكس</div>
+        <div class="login-card">
+            <div class="field-group">
+                <label class="field-label">ID</label>
+                <input type="text" id="idInput" class="field-input" placeholder="أدخل ID حسابك">
+            </div>
+
+            <div class="field-group">
+                <label class="field-label">كلمة السر</label>
+                <input type="password" id="passInput" class="field-input" placeholder="••••••••">
+            </div>
+
+            <button class="btn-login" onclick="authenticate()">دخول</button>
+            <div class="err-msg" id="loginErr"></div>
+        </div>
+        <div class="author-tag">صنع بواسطة MOHAMED ALAA</div>
+    </div>
+
+    <!-- شاشة اللعبة -->
+    <div id="game-view">
+        <div class="main-title">اسكربت ايمكس</div>
+
+        <div class="status-header">
+            <div class="info-pill" id="usersLabel">Online Users: 204</div>
+            <div class="info-pill" id="idLabel">Your ID: 1263586555</div>
+        </div>
+
+        <div class="board-container">
+            <div class="rows-wrapper" id="boardRows"></div>
+        </div>
+
+        <div class="actions-group">
+            <button class="action-btn" id="startBtn" onclick="startStepByStepAnimation()">START</button>
+            <button class="action-btn" onclick="resetBoard()">RESET</button>
+        </div>
+
+        <div class="footer-note" id="statusNote">
+            تمت إعادة التفاحات لوضع الإغلاق
+        </div>
+    </div>
+
+</div>
+
+<script>
+    const ROWS_COUNT = 10;
+    const COLS_COUNT = 5;
+    const MULTIPLIERS = [
+        "x1.23", "x1.54", "x1.93", "x2.41", "x4.02",
+        "x6.71", "x11.18", "x27.97", "x69.93", "x349.68"
+    ];
+
+    let animationInterval = null;
+    let liveCounterInterval = null;
+
+    // إدارة عدد المستخدمين المتصلين
+    function getOnlineUsers() {
+        let stored = localStorage.getItem('online_users_count');
+        if (!stored) {
+            stored = 204;
+        }
+        return parseInt(stored, 10);
+    }
+
+    function setOnlineUsers(val) {
+        localStorage.setItem('online_users_count', val);
+        const el = document.getElementById('usersLabel');
+        if (el) el.textContent = 'Online Users: ' + val;
+    }
+
+    function startLiveFluctuation() {
+        if (liveCounterInterval) clearInterval(liveCounterInterval);
+        liveCounterInterval = setInterval(() => {
+            let current = getOnlineUsers();
+            // تغير عشوائي طفيف كل 6 ثوان (+1 أو -1 أو +2)
+            const change = Math.floor(Math.random() * 5) - 2;
+            let updated = current + change;
+            if (updated < 180) updated = 200;
+            setOnlineUsers(updated);
+        }, 6000);
+    }
+
+    function authenticate() {
+        const enteredId = document.getElementById('idInput').value.trim();
+        const enteredPass = document.getElementById('passInput').value.trim().toLowerCase();
+        const err = document.getElementById('loginErr');
+
+        if (!enteredId) {
+            err.textContent = "يرجى كتابة الـ ID أولاً";
+            return;
+        }
+
+        if (enteredPass !== "ايمكس" && enteredPass !== "imx" && enteredPass !== "emx") {
+            err.textContent = "كلمة السر غير صحيحة";
+            return;
+        }
+
+        // زيادة عشوائية عند كل تسجيل دخول بين 10 إلى 20
+        const randomBonus = Math.floor(Math.random() * 11) + 10; 
+        let totalUsers = getOnlineUsers() + randomBonus;
+        setOnlineUsers(totalUsers);
+
+        document.getElementById('idLabel').textContent = 'Your ID: ' + enteredId;
+        document.getElementById('login-view').style.display = 'none';
+        document.getElementById('game-view').style.display = 'flex';
+        
+        resetBoard();
+        startLiveFluctuation();
+    }
+
+    function buildBaseBoard() {
+        const board = document.getElementById('boardRows');
+        board.innerHTML = '';
+
+        for (let r = 0; r < ROWS_COUNT; r++) {
+            const rowDiv = document.createElement('div');
+            rowDiv.className = 'row-item';
+
+            const cellsDiv = document.createElement('div');
+            cellsDiv.className = 'cells-group';
+
+            for (let c = 0; c < COLS_COUNT; c++) {
+                const token = document.createElement('div');
+                token.id = `token-${r}-${c}`;
+                token.className = 'circle-token token-default';
+                cellsDiv.appendChild(token);
+            }
+
+            const multDiv = document.createElement('div');
+            multDiv.className = 'multiplier-tag';
+            multDiv.innerHTML = `${MULTIPLIERS[r]} <span class="icon">✿</span>`;
+
+            rowDiv.appendChild(cellsDiv);
+            rowDiv.appendChild(multDiv);
+            board.appendChild(rowDiv);
+        }
+    }
+
+    function resetBoard() {
+        if (animationInterval) clearInterval(animationInterval);
+        buildBaseBoard();
+        document.getElementById('statusNote').innerHTML = 'تمت إعادة التفاحات لوضع الإغلاق';
+        document.getElementById('startBtn').disabled = false;
+    }
+
+    function startStepByStepAnimation() {
+        resetBoard();
+        document.getElementById('startBtn').disabled = true;
+        document.getElementById('statusNote').innerHTML = 'جار إظهار التفاحات من تحت لفوق...';
+
+        let currentRow = 0;
+
+        animationInterval = setInterval(() => {
+            if (currentRow >= ROWS_COUNT) {
+                clearInterval(animationInterval);
+                document.getElementById('statusNote').innerHTML = 'اكتمل العرض — تجربة عشوائية للواجهة فقط، وليست توقعًا لنتائج أي لعبة حقيقية.';
+                document.getElementById('startBtn').disabled = false;
+                return;
+            }
+
+            const numGreen = currentRow < 4 ? 4 : (currentRow < 7 ? 3 : (currentRow < 9 ? 2 : 1));
+            let greenCols = [];
+            while (greenCols.length < numGreen) {
+                let rand = Math.floor(Math.random() * COLS_COUNT);
+                if (!greenCols.includes(rand)) greenCols.push(rand);
+            }
+
+            for (let c = 0; c < COLS_COUNT; c++) {
+                const token = document.getElementById(`token-${currentRow}-${c}`);
+                if (token) {
+                    const isGreen = greenCols.includes(c);
+                    token.className = 'circle-token ' + (isGreen ? 'token-green' : 'token-red');
+                    token.innerHTML = '🍎';
+                }
+            }
+
+            currentRow++;
+        }, 500);
+    }
+</script>
+
+</body>
+</html>
